@@ -3,11 +3,13 @@ const User = require('../models/user')
 const { NotFoundError } = require('../errors')
 
 const getAllUsers = async (req, res) => {
+  console.log(req.user)
   const users = await User.find({role: 'user'}).select('-password')
   res.status(StatusCodes.OK).json({users})
 }
 
 const getSingleUser = async (req, res) => {
+  console.log(req.user)
   const {params: {userId}} = req
   const user = await User.findOne({_id: userId}).select('-password')
 
