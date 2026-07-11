@@ -8,7 +8,11 @@ const {
   BadRequestError,
   UnauthenticatedError,
 } = require("../errors");
-const { attachCookiesToResponse, createJWT } = require("../utils");
+const {
+  attachCookiesToResponse,
+  createJWT,
+  createTokenUser,
+} = require("../utils");
 
 const register = async function (req, res) {
   const {
@@ -28,19 +32,23 @@ const register = async function (req, res) {
 
   const user = await User.create({ name, email, password, role });
 
-  const tokenUser = { userId: user._id, name: user.name, role: user.role };
+  const tokenUser = createTokenUser(user);
+
+  console.log(tokenUser);
   attachCookiesToResponse({ res, user: tokenUser });
   res.status(StatusCodes.CREATED).json({ user });
 };
 
 const login = async (req, res) => {
-  const {body: { email, password },} = req;
+  const {
+    body: { email, password },
+  } = req;
 
   if (!email || !password) {
     throw new BadRequestError("Please provide email and password");
   }
 
-  const user = await User.findOne({email});
+  const user = await User.findOne({ email });
 
   if (!user) {
     throw new UnauthenticatedError("Invalid credentials {User}");
@@ -52,7 +60,8 @@ const login = async (req, res) => {
     throw new UnauthenticatedError("Invalid credentials {password}");
   }
 
-  const tokenUser = { userId: user._id, name: user.name, role: user.role };
+  const tokenUser = createTokenUser(user);
+
   attachCookiesToResponse({ res, user: tokenUser });
   res.status(StatusCodes.OK).json({ user });
 };
