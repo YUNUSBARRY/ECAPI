@@ -1,5 +1,6 @@
 const { required } = require("joi");
 const mongoose = require("mongoose");
+const { deleteMany } = require("./review");
 const Schema = mongoose.Schema;
 
 const ProductSchema = new Schema(
@@ -46,7 +47,7 @@ const ProductSchema = new Schema(
 
     colors: {
       type: [String],
-      default: ['#222'],
+      default: ["#222"],
       required: true,
     },
 
@@ -71,13 +72,35 @@ const ProductSchema = new Schema(
       default: 0,
     },
 
-    user: { 
-      type: Schema.Types.ObjectId, 
-      ref: "User", 
-      required: true 
+    numOfReviews: {
+      type: Number,
+      default: 0,
+    },
+
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
   },
-  { timestamps: true },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  },
 );
+
+ProductSchema.virtual("reviews", {
+  ref: "Review",
+  localField: "_id",
+  foreignField: "product",
+  justOne: false,
+  // match: { rating: 5 },
+});
+
+ProductSchema.pre('deleteOne',{document: true}, async function (next) {
+  const productId = this._id
+  await this.model('Review').deleteMany({product: productId})
+})
 
 module.exports = mongoose.model("Product", ProductSchema);

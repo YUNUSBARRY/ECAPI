@@ -1,6 +1,6 @@
 const express = require("express");
 
-const {getAllReviews,createReview,getSingleReview,updateReview,deleteReview} = require("../controllers/review-controller");
+const {getAllReviews,createReview,getSingleReview,updateReview,deleteReview, getSingleProductReviews} = require("../controllers/review-controller");
 
 const {
   authenticateUser,
@@ -9,8 +9,8 @@ const {
 const router = express.Router();
 
 router.route("/")
+  .get(getAllReviews)
   .post(authenticateUser, createReview)
-  .get(getAllReviews);
 
 router.route("/:reviewId")
   .get(getSingleReview)
