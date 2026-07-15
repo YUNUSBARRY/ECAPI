@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const singleCartItemSchema = new Schema({
+const singleOrderItemSchema = new Schema({
   name: { type: String, required: true },
   image: { type: String, required: true },
   price: { type: Number, required: true },
@@ -16,11 +16,11 @@ const OrderSchema = new Schema(
       type: Number,
       required: true,
     },
-    shipping: {
+    shippingFee: {
       type: Number,
       required: true,
     },
-    subTotal: {
+    subtotal: {
       type: Number,
       required: true,
     },
@@ -29,7 +29,7 @@ const OrderSchema = new Schema(
       required: true,
     },
 
-    cartItems: [singleCartItemSchema],
+    orderItems: [singleOrderItemSchema],
 
     status: {
       type: String,
